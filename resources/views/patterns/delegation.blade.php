@@ -98,6 +98,135 @@
 
     </div>
 
+    {{-- Примеры кода --}}
+    <h2 class="text-lg font-semibold text-gray-800 mt-10 mb-4">Примеры кода</h2>
+
+    <div class="space-y-4">
+
+        <x-code-window language="php" filename="Использование">
+$app = new AppMessenger(); // внутри создаётся EmailMessenger по умолчанию
+
+// Цепочка вызовов — каждый метод возвращает $this->messenger
+$result = $app
+    ->setSender('sender@mail.ru')
+    ->setRecipient('recipient@mail.ru')
+    ->setMessage('Hello email messenger')
+    ->send(); // 'Привет! я Email Messenger'
+
+// Переключаем делегата на SMS — AppMessenger не меняется
+$result = $app->toSms()
+    ->setSender('89178239146')
+    ->setRecipient('84324023423')
+    ->setMessage('Hello SMS messenger')
+    ->send(); // 'Привет! я SMS Messenger'
+        </x-code-window>
+
+        <x-code-window language="php" filename="MessengerInterface.php">
+interface MessengerInterface
+{
+    public function setSender($value): MessengerInterface;
+
+    public function setRecipient($value): MessengerInterface;
+
+    public function setMessage($value): MessengerInterface;
+
+    public function send(): string|bool;
+}
+        </x-code-window>
+
+        <x-code-window language="php" filename="Messenger.php">
+// Абстрактный базовый класс — хранит данные, но не знает как отправить
+abstract class Messenger implements MessengerInterface
+{
+    protected $sender;
+    protected $recipient;
+    protected $message;
+
+    public function setSender($value): MessengerInterface
+    {
+        $this->sender = $value;
+        return $this;
+    }
+
+    public function setRecipient($value): MessengerInterface
+    {
+        $this->recipient = $value;
+        return $this;
+    }
+
+    public function setMessage($value): MessengerInterface
+    {
+        $this->message = $value;
+        return $this;
+    }
+
+    public function send(): string|bool
+    {
+        return true;
+    }
+}
+        </x-code-window>
+
+        <x-code-window language="php" filename="EmailMessenger.php / SmsMessenger.php">
+// Конкретные реализации — переопределяют только send()
+class EmailMessenger extends Messenger
+{
+    public function send(): string|bool
+    {
+        return 'Привет! я Email Messenger';
+    }
+}
+
+class SmsMessenger extends Messenger
+{
+    public function send(): string|bool
+    {
+        return 'Привет! я SMS Messenger';
+    }
+}
+        </x-code-window>
+
+        <x-code-window language="php" filename="AppMessenger.php">
+// Главный класс-делегатор — сам ничего не делает
+// Все вызовы проксирует к текущему $messenger
+class AppMessenger implements MessengerInterface
+{
+    private MessengerInterface $messenger;
+
+    public function __construct()
+    {
+        $this->toEmail(); // по умолчанию — email
+    }
+
+    public function toEmail(): static
+    {
+        $this->messenger = new EmailMessenger();
+        return $this;
+    }
+
+    public function toSms(): static
+    {
+        $this->messenger = new SmsMessenger();
+        return $this;
+    }
+
+    public function setSender($value): MessengerInterface
+    {
+        $this->messenger->setSender($value);
+        return $this->messenger;
+    }
+
+    // setRecipient(), setMessage() — то же самое
+
+    public function send(): string|bool
+    {
+        return $this->messenger->send(); // делегируем
+    }
+}
+        </x-code-window>
+
+    </div>
+
     <div class="mt-8">
         @php dump($item) @endphp
     </div>
