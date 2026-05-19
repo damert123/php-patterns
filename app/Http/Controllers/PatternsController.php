@@ -10,6 +10,10 @@ use App\Patterns\EventChannel\EventChannel;
 use App\Patterns\EventChannel\Publisher;
 use App\Patterns\EventChannel\Subscriber;
 use App\Patterns\PropertyContainer\BlogPost;
+use App\Patterns\SimpleFactory\MessengerSimpleFactory;
+use App\Patterns\StaticFactory\StaticFactory;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\View\View;
 
 class PatternsController extends Controller
@@ -47,8 +51,25 @@ class PatternsController extends Controller
         ]);
     }
 
+
+    public function simpleFactory()
+    {
+        $factory = new MessengerSimpleFactory();
+        $appMailMessenger = $factory->build('email');
+        $appSmsMessenger = $factory->build('sms');
+    }
+    public function staticFactory()
+    {
+        $appMailMessenger = StaticFactory::build('email');
+        $appSmsMessenger = StaticFactory::build('sms');
+
+
+    }
+
     public function abstractFactory(): View
     {
+
+
         $bootstrap = (new GuiKitFactory)->getFactory('bootstrap');
         $semanticUi = (new GuiKitFactory)->getFactory('semanticui');
 
