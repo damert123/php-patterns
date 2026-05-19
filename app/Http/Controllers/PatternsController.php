@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Patterns\AbstractFactory\Factory\GuiKitFactory;
+use App\Patterns\AbstractMethod\BootstrapDialogForm;
+use App\Patterns\AbstractMethod\SemanticDialogForm;
 use App\Patterns\Delegation\AppMessenger;
 use App\Patterns\EventChannel\EventChannel;
 use App\Patterns\EventChannel\Publisher;
@@ -38,6 +40,7 @@ class PatternsController extends Controller
                     'description' => 'Отвечают за создание объектов',
                     'patterns' => [
                         ['name' => 'Абстрактная фабрика', 'url' => route('patterns.abstract-factory')],
+                        ['name' => 'Фабричный метод', 'url' => route('patterns.abstract-method')],
                     ],
                 ],
             ],
@@ -158,6 +161,18 @@ class PatternsController extends Controller
         return view('patterns.property-container', [
             'name' => $name,
             'item' => $item,
+        ]);
+    }
+
+    public function abstractMethod(): View
+    {
+        $bootstrapForm = new BootstrapDialogForm;
+        $semanticForm = new SemanticDialogForm;
+
+        return view('patterns.abstract-method', [
+            'name' => 'Фабричный метод (Factory Method)',
+            'bootstrapResult' => $bootstrapForm->render(),
+            'semanticResult' => $semanticForm->render(),
         ]);
     }
 

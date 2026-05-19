@@ -1,3 +1,62 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+A Laravel 13 application that demonstrates classic design patterns implemented in PHP 8.3. Each pattern lives under `app/Patterns/{PatternName}/` with its own interfaces, abstract classes, and concrete implementations. A single `PatternsController` wires up each pattern and renders it via Blade views at `/patterns/*`.
+
+## Common Commands
+
+```bash
+# Setup
+composer run setup
+
+# Development (serves app, queue, logs, vite concurrently)
+composer run dev
+
+# Run all tests
+php artisan test --compact
+
+# Run a specific test file
+php artisan test --compact tests/Feature/ExampleTest.php
+
+# Run a single test by name
+php artisan test --compact --filter=testName
+
+# Lint/format PHP (run after modifying any PHP file)
+vendor/bin/pint --dirty --format agent
+
+# Build frontend assets
+npm run build
+```
+
+## Architecture
+
+### Design Patterns (`app/Patterns/`)
+
+Each pattern is a self-contained module with interfaces, abstract classes, and concrete implementations:
+
+- **AbstractFactory** - GUI kit factory producing Bootstrap/SemanticUI components. `GuiKitFactory` selects the concrete factory by type string.
+- **AbstractMethod** - Form creation via `AbstractForm` with Bootstrap/Semantic dialog implementations.
+- **Delegation** - `AppMessenger` delegates to `EmailMessenger`/`SmsMessenger` via fluent interface.
+- **EventChannel** - Pub/sub system with `Publisher`, `Subscriber`, and `EventChannel` broker.
+- **PropertyContainer** - Dynamic property storage on `BlogPost` via trait/interface.
+
+### Routing
+
+All pattern demos are grouped under `/patterns` prefix with named routes (`patterns.delegation`, `patterns.abstract-factory`, etc.) in `routes/web.php`. A single `PatternsController` handles all routes.
+
+### Stack
+
+- PHP 8.3, Laravel 13, PHPUnit 12
+- Tailwind CSS 4, Vite 8
+- Laravel Boost (dev MCP tools), Laravel Pint (formatting)
+
+### Language
+
+UI text and comments in the codebase are in Russian. Maintain this convention when adding new patterns or user-facing text.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
@@ -106,7 +165,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Always use explicit return type declarations for methods and functions.
 - Use appropriate PHP type hints for method parameters.
 
-<!-- Explicit Return Types and Method Params -->
 ```php
 protected function isAccessible(User $user, ?string $path = null): bool
 {

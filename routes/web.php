@@ -14,4 +14,5 @@ Route::prefix('patterns')->name('patterns.')->group(function () {
     Route::get('/event-channel', [PatternsController::class, 'eventChannel'])->name('event-channel');
     Route::get('/interface', [PatternsController::class, 'interfacePattern'])->name('interface');
     Route::get('/abstract-factory', [PatternsController::class, 'abstractFactory'])->name('abstract-factory');
+    Route::get('/abstract-method', [PatternsController::class, 'abstractMethod'])->name('abstract-method');
 });
